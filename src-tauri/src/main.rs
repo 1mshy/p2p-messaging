@@ -3,9 +3,8 @@
 
 mod httpbin;
 
-use reqwest::{Error, Response};
-use serde::Serialize;
-use serde_json::{json, Value};
+use reqwest::{Error};
+use serde_json::{Value};
 use crate::httpbin::Dustbin;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -51,6 +50,7 @@ async fn request_ip() -> String {
 /// ```
 ///     post(&json!({"one": "things"}));
 /// ```
+#[allow(dead_code)] // makes the compiler not spit out warnings bc we aren't using it yet
 #[tokio::main]
 async fn post(payload: &Value) -> Result<(), Error> {
     let client = reqwest::Client::new();
