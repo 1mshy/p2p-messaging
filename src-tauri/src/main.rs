@@ -16,7 +16,6 @@ fn greet(name: &str) -> String {
 
 #[tauri::command]
 fn message(name: &str) -> String {
-    // post(&json!({"one": "things"}));
     format!("You are about to send the message: {}", name)
 }
 
@@ -27,12 +26,12 @@ async fn request_ip() -> String {
     let response = match client.get("http://localhost:5555/ip")
         .send().await {
         Ok(response) => response,
-        Err(e) => return err_str
+        Err(_) => return err_str
     };
     if response.status().is_success() {
         let person: Dustbin = match response.json().await {
             Ok(ip) => ip,
-            Err(e) => return err_str
+            Err(_) => return err_str
         }; // Deserialize JSON response
         return person.origin;
     }
