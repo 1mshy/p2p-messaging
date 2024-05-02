@@ -27,6 +27,7 @@ function App() {
                     e.preventDefault();
                     greet()
                     request_ip();
+                    invoke("register", {name: message})
                 }}
             >
                 <input
