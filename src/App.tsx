@@ -1,40 +1,47 @@
-import { useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
+import {useState} from "react";
+import {invoke} from "@tauri-apps/api/tauri";
 import "./App.css";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [message, setMessage] = useState("");
+    const [greetMsg, setGreetMsg] = useState("");
+    const [ip, setIp] = useState("");
+    const [message, setMessage] = useState("");
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("message", { name: message }));
-  }
+    async function greet() {
+        // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+        setGreetMsg(await invoke("message", {name: message}));
+    }
 
-  return (
-    <div className="container">
-      <h1>Welcome to P2P Messaging!</h1>
+    async function request_ip() {
+        setIp(await invoke("request_ip"))
+    }
 
-      <p>Send a message to start.</p>
+    return (
+        <div className="container">
+            <h1>Welcome to P2P Messaging!</h1>
 
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setMessage(e.currentTarget.value)}
-          placeholder="Enter a Message..."
-        />
-        <button type="submit">Send</button>
-      </form>
+            <p>Send a message to start.</p>
+            <p>{ip}</p>
 
-      <p>{greetMsg}</p>
-    </div>
-  );
+            <form
+                className="row"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    greet()
+                    request_ip();
+                }}
+            >
+                <input
+                    id="greet-input"
+                    onChange={(e) => setMessage(e.currentTarget.value)}
+                    placeholder="Enter a Message..."
+                />
+                <button type="submit">Send</button>
+            </form>
+
+            <p>{greetMsg}</p>
+        </div>
+    );
 }
 
 export default App;
