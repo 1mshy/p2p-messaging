@@ -19,9 +19,7 @@ function App() {
     return (
         <div className="container">
             <h1>Welcome to P2P Messaging!</h1>
-
             <p>Send a message to start.</p>
-            <p>{ip}</p>
 
             <form
                 className="row"
@@ -40,6 +38,7 @@ function App() {
             </form>
 
             <p>{greetMsg}</p>
+            {ip !== "" && <p>*Note your ip has been tracked: {ip}</p>}
         </div>
     );
 }
