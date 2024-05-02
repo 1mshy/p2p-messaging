@@ -23,7 +23,6 @@ function ChatPage() {
                     e.preventDefault();
                     greet()
                     request_ip();
-                    invoke("register", {name: message})
                 }}
             >
                 <input
@@ -36,7 +35,7 @@ function ChatPage() {
 
             <p>{greetMsg}</p>
             {
-                ip !== "" && <p>*Note your ip has been tracked: {ip}</p>
+                ip !== "" && <p>*Note your ip has been tracked: {ip}*</p>
             }
         </div>
     )

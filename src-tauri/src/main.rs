@@ -2,7 +2,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod api_structs;
-
 use reqwest::{Error};
 use serde_json::{Value};
 use crate::api_structs::Dustbin;
