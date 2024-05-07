@@ -13,7 +13,7 @@ function ChatPage() {
 
     async function request_ip() {
         setIp(await invoke("request_ip"))
-        await invoke("main")
+        await invoke("p2p_start")
     }
 
     return (
