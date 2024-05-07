@@ -2,6 +2,8 @@ use std::net::{TcpListener, TcpStream, SocketAddr};
 use std::io::{self, Read, Write};
 use std::env;
 use std::thread;
+use tauri::command;
+use tokio::main;
 
 async fn handle_client(mut stream: TcpStream) {
     let mut buffer = [0; 512];
@@ -20,7 +22,7 @@ async fn start_server(address: &str) -> io::Result<()> {
     for stream in listener.incoming() {
         match stream {
             Ok(stream) => {
-                println!("New connection: {}", stream.peer_addr().await.unwrap());
+                println!("New connection: {}", stream.peer_addr().unwrap());
                 thread::spawn(|| handle_client(stream));
             },
             Err(e) => { eprintln!("Error: {}", e); }
@@ -36,23 +38,21 @@ async fn connect_to_peer(address: &str) -> io::Result<()> {
 
     let message = b"Hello from the other side!";
     stream.write_all(message)?;
-    handle_client(stream);
+    handle_client(stream).await;
     Ok(())
 }
 
-async fn main() {
-    let args: Vec<String> = env::args().collect();
-    if args.len() != 3 {
-        eprintln!("Usage: {} [server|client] [address:port]", args[0]);
-        return;
-    }
+#[command]
+pub async fn p2p_start() {
+    let mode = "client";
+    let address = "10.0.0.14:6000";
 
-    let mode = &args[1];
-    let address = &args[2];
-
-    match mode.as_str() {
-        "server" => start_server(address).await.unwrap(),
-        "client" => connect_to_peer(address).await.unwrap(),
+    match mode {
+        "client" => {
+            if let Err(e) = connect_to_peer(address).await {
+                eprintln!("Failed to connect: {}", e);
+            }
+        },
         _ => eprintln!("Invalid mode: {}", mode),
     }
 }

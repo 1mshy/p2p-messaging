@@ -2,11 +2,13 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod api_structs;
+mod p2p;
 
 
 use reqwest::{Error};
 use serde_json::{Value};
 use crate::api_structs::Dustbin;
+use crate::p2p::{p2p_start};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -89,7 +91,7 @@ async fn post(payload: &Value) -> Result<(), Error> {
 #[tokio::main]
 async fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, message, request_ip, register])
+        .invoke_handler(tauri::generate_handler![greet, message, request_ip, register, p2p_start])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
