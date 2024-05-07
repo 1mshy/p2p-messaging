@@ -42,7 +42,7 @@ async fn connect_to_peer(address: &str) -> io::Result<()> {
 
 #[command]
 pub async fn p2p_start() {
-    let mode = "client";
+    let mode = "server";
     let address = "10.0.0.14:6000";
 
     match mode {
@@ -52,7 +52,7 @@ pub async fn p2p_start() {
             }
         },
         "server" => {
-            if let Err(e) = connect_to_peer(address).await {
+            if let Err(e) = start_server(address).await {
                 eprintln!("Failed to connect: {}", e);
             }
         }
