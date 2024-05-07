@@ -39,15 +39,34 @@ async fn connect_to_peer(address: &str) -> io::Result<()> {
     handle_client(stream).await;
     Ok(())
 }
+async fn connect_to_peer_async(address: &str) -> io::Result<()> {
+    match TcpStream::connect(address) {
+        Ok(mut stream) => {
+            println!("Connected to peer at {}", address);
+            let message = b"Hello from the other side!";
+            if let Err(e) = stream.write_all(message) {
+                eprintln!("Error sending message: {}", e);
+                return Err(e);
+            }
+            handle_client(stream).await;
+            Ok(())
+        },
+        Err(e) => {
+            eprintln!("Failed to connect to {}: {}", address, e);
+            // Implement retry logic here if appropriate
+            Err(e)
+        }
+    }
+}
 
 #[command]
 pub async fn p2p_start() {
-    let mode = "server";
+    let mode = "client";
     let address = "10.0.0.14:6000";
 
     match mode {
         "client" => {
-            if let Err(e) = connect_to_peer(address).await {
+            if let Err(e) = connect_to_peer_async(address).await {
                 eprintln!("Failed to connect: {}", e);
             }
         },
