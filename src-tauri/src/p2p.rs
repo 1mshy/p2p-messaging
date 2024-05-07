@@ -1,9 +1,8 @@
-use std::net::{TcpListener, TcpStream, SocketAddr};
+use std::net::{TcpListener, TcpStream};
 use std::io::{self, Read, Write};
-use std::env;
+
 use std::thread;
 use tauri::command;
-use tokio::main;
 
 async fn handle_client(mut stream: TcpStream) {
     let mut buffer = [0; 512];
@@ -23,12 +22,11 @@ async fn start_server(address: &str) -> io::Result<()> {
         match stream {
             Ok(stream) => {
                 println!("New connection: {}", stream.peer_addr().unwrap());
-                thread::spawn(|| handle_client(stream));
+                thread::spawn( || handle_client(stream));
             },
             Err(e) => { eprintln!("Error: {}", e); }
         }
     }
-
     Ok(())
 }
 
@@ -53,6 +51,11 @@ pub async fn p2p_start() {
                 eprintln!("Failed to connect: {}", e);
             }
         },
+        "server" => {
+            if let Err(e) = connect_to_peer(address).await {
+                eprintln!("Failed to connect: {}", e);
+            }
+        }
         _ => eprintln!("Invalid mode: {}", mode),
     }
 }
