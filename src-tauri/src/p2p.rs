@@ -37,7 +37,6 @@ async fn connect_to_peer(address: &str) -> io::Result<()> {
     let message = b"Hello from the other side!";
     stream.write_all(message)?;
     handle_client(stream);
-
     Ok(())
 }
 
