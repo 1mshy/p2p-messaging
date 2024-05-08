@@ -8,9 +8,9 @@ async fn handle_client(mut stream: TcpStream) {
     let mut buffer = [0; 512];
     loop {
         let bytes_read = stream.read(&mut buffer).expect("Error reading from stream");
-        if bytes_read == 0 { break; }
+        // if bytes_read == 0 { break; }
         println!("Received: {}", String::from_utf8_lossy(&buffer[..bytes_read]));
-        stream.write_all(&buffer[..bytes_read]).expect("Error writing to stream");
+        // stream.write_all(&buffer[..bytes_read]).expect("Error writing to stream");
     }
 }
 
@@ -22,7 +22,9 @@ async fn start_server(address: &str) -> io::Result<()> {
         match stream {
             Ok(stream) => {
                 println!("New connection: {}", stream.peer_addr().unwrap());
-                thread::spawn( || handle_client(stream));
+                tokio::spawn(async move {
+                    handle_client(stream).await;
+                });
             },
             Err(e) => { eprintln!("Error: {}", e); }
         }
@@ -48,7 +50,9 @@ async fn connect_to_peer_async(address: &str) -> io::Result<()> {
                 eprintln!("Error sending message: {}", e);
                 return Err(e);
             }
-            handle_client(stream).await;
+            tokio::spawn(async move {
+                handle_client(stream).await;
+            });
             Ok(())
         },
         Err(e) => {
@@ -61,8 +65,8 @@ async fn connect_to_peer_async(address: &str) -> io::Result<()> {
 
 #[command]
 pub async fn p2p_start() {
-    let mode = "client";
-    let address = "10.0.0.14:6000";
+    let mode = "server";
+    let address = "10.0.0.168:5555";
 
     match mode {
         "client" => {
