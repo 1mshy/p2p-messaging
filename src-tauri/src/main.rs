@@ -9,9 +9,9 @@ use std::sync::Arc;
 use reqwest::{Error};
 use serde_json::{Value};
 use crate::api_structs::Dustbin;
-use crate::p2p::{p2p_start};
 use tauri::{Builder, Manager, UserAttentionType};
 use tokio::sync::Mutex;
+use crate::p2p::{p2p_start, send_message};
 
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -72,7 +72,7 @@ async fn register() -> String {
 ///
 /// * `payload`: &Value
 ///
-/// returns: Result<(), Error>
+/// returns: Result<pub(crate) pub(crate) (), Error>
 ///
 /// # Examples
 ///
@@ -103,7 +103,7 @@ async fn main() {
         .manage(p2p::AppState {
             connection: Arc::new(Mutex::new(None))
         })
-        .invoke_handler(tauri::generate_handler![greet, message, request_ip, register, p2p_start])
+        .invoke_handler(tauri::generate_handler![greet, message, request_ip, register, p2p_start, send_message])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

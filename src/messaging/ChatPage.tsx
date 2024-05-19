@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {invoke} from "@tauri-apps/api/tauri";
 
 function ChatPage() {
@@ -13,8 +13,14 @@ function ChatPage() {
 
     async function request_ip() {
         setIp(await invoke("request_ip"))
-        await invoke("p2p_start")
     }
+
+    /**
+     * Runs when this component is finished rendering
+     */
+    useEffect( () => {
+        invoke("p2p_start")
+    }, []);
 
     return (
         <div>

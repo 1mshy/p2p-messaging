@@ -45,13 +45,8 @@ async fn start_server(address: &str) -> io::Result<()> {
 
 async fn connect_to_peer_async(address: &str) -> io::Result<Arc<Mutex<TcpStream>>> {
     match TcpStream::connect(address) {
-        Ok(mut stream) => {
+        Ok(stream) => {
             println!("Connected to peer at {}", address);
-            let message = b"Hello this is karen calling from the client!";
-            if let Err(e) = stream.write_all(message) {
-                eprintln!("Error sending message: {}", e);
-                return Err(e);
-            }
             let stream = Arc::new(Mutex::new(stream));
             tokio::spawn(handle_client(stream.clone()));
             Ok(stream)
@@ -63,7 +58,7 @@ async fn connect_to_peer_async(address: &str) -> io::Result<Arc<Mutex<TcpStream>
     }
 }
 #[command]
-async fn send_message(message: &str, state: State<'_, AppState>) -> Result<(), Error> {
+pub async fn send_message(message: &str, state: State<'_, AppState>) -> Result<(), Error> {
     let conn = state.connection.lock().await;
     if let Some(stream) = &*conn {
         let mut stream = stream.lock().await;
@@ -79,10 +74,10 @@ async fn send_message(message: &str, state: State<'_, AppState>) -> Result<(), E
 }
 
 #[command]
-pub async fn p2p_start(message:&str) -> Result<(), Error> {
-    let mode = "client";
-    let address = "10.0.0.10:5555";
-
+pub async fn p2p_start() -> Result<(), Error> {
+    let mode = "server";
+    let address = "10.0.0.12:5555";
+    println!("Connecting maybe");
     match mode {
         "client" => {
             if let Err(e) = connect_to_peer_async(address).await {
